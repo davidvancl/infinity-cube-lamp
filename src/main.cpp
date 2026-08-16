@@ -1,38 +1,40 @@
 #include <Arduino.h>
-#include <IRremoteESP8266.h>
-#include <IRrecv.h>
-#include <IRutils.h>
-#include "IRController.h"
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
 
-#define IR_RECEIVE_PIN 4
+#define SDA_PIN 4
+#define SCL_PIN 5
 
-IRrecv irrecv(IR_RECEIVE_PIN);
-decode_results results;
+#define RED_PIN   0
+#define GREEN_PIN 1
+#define BLUE_PIN  2
+
+Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
+
+void setRGB(uint16_t r, uint16_t g, uint16_t b) {
+  pwm.setPWM(RED_PIN, 0, r);
+  pwm.setPWM(GREEN_PIN, 0, g);
+  pwm.setPWM(BLUE_PIN, 0, b);
+}
 
 void setup() {
   Serial.begin(115200);
-  irrecv.enableIRIn();
-  Serial.println("Initialization complete.");
+  Wire.begin(SDA_PIN, SCL_PIN);
+  pwm.begin();
+  pwm.setPWMFreq(1000);
+  setRGB(0, 0, 0);
 }
 
 void loop() {
-  if (irrecv.decode(&results)) {
-    if (results.decode_type != decode_type_t::UNKNOWN && !results.repeat) {
-      Serial.print("Decoded IR signal: ");
-      Serial.println(resultToHexidecimal(&results));
+  Serial.println("Cervena");
+  setRGB(4095, 0, 0);
+  delay(1000);
 
-      switch (results.value) {
-        case IR_BTN_ON:
-          Serial.println("Stisknuto POWER ON");
-          break;
-        case IR_BTN_OFF:
-          Serial.println("Stisknuto POWER OFF");
-          break;
-      }
-    }
+  Serial.println("Zelena");
+  setRGB(0, 4095, 0);
+  delay(1000);
 
-    irrecv.resume();
-  }
-  
-  yield();
+  Serial.println("Modra");
+  setRGB(0, 0, 4095);
+  delay(1000);
 }
