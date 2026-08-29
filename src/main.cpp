@@ -5,36 +5,41 @@
 #define SDA_PIN 4
 #define SCL_PIN 5
 
-#define RED_PIN   0
-#define GREEN_PIN 1
-#define BLUE_PIN  2
+#define MOTOR   0
 
 Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
-
-void setRGB(uint16_t r, uint16_t g, uint16_t b) {
-  pwm.setPWM(RED_PIN, 0, r);
-  pwm.setPWM(GREEN_PIN, 0, g);
-  pwm.setPWM(BLUE_PIN, 0, b);
-}
 
 void setup() {
   Serial.begin(115200);
   Wire.begin(SDA_PIN, SCL_PIN);
   pwm.begin();
-  pwm.setPWMFreq(1000);
-  setRGB(0, 0, 0);
+  pwm.setPWMFreq(100);
+
+  pwm.setPWM(MOTOR, 0, 1000); // Výchozí hodnota
+  Serial.println("Zadej PWM hodnotu (0 - 4095):");
 }
 
 void loop() {
-  Serial.println("Cervena");
-  setRGB(4095, 0, 0);
-  delay(1000);
+  // Ponechá prostor pro vnitřní procesy ESP (WiFi, watchdog...)
+  yield();
 
-  Serial.println("Zelena");
-  setRGB(0, 4095, 0);
-  delay(1000);
+  if (Serial.available() > 0) {
+    // Přečte celý řádek až po entru (neblokuje zbytečně dlouho)
+    String input = Serial.readStringUntil('\n');
+    input.trim(); // Odstraní mezery, \r a další bílé znaky
 
-  Serial.println("Modra");
-  setRGB(0, 0, 4095);
-  delay(1000);
+    if (input.length() > 0) {
+      int pwmValue = input.toInt(); // Převede text na číslo
+
+      // Ověření platnosti vstupu (0 může být hodnota 0 nebo chyba převodu)
+      if (pwmValue >= 0 && pwmValue <= 4095) {
+        pwm.setPWM(MOTOR, 0, pwmValue);
+
+        Serial.print("MOTOR PWM nastaveno na: ");
+        Serial.println(pwmValue);
+      } else {
+        Serial.println("Chyba: Zadavej pouze hodnoty v rozsahu 0 az 4095!");
+      }
+    }
+  }
 }
