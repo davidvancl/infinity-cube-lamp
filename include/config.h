@@ -35,24 +35,24 @@ struct ColorButton {
 
 static const ColorButton COLOR_BUTTONS[] = {
   // 2. řada
-  {IR_BTN_R,   255,   0,   0, "cervena"},
-  {IR_BTN_G,     0, 255,   0, "zelena"},
-  {IR_BTN_B,     0,   0, 255, "modra"},
-  {IR_BTN_W,   255, 255, 255, "bila"},
+  {IR_BTN_R,   255,   0,   0, "red"},
+  {IR_BTN_G,     0, 255,   0, "green"},
+  {IR_BTN_B,     0,   0, 255, "blue"},
+  {IR_BTN_W,   255, 255, 255, "white"},
   // 3. řada
-  {IR_BTN_R_1, 255,  60,   0, "oranzovocervena"},
-  {IR_BTN_G_1,   0, 255, 100, "svetle zelena"},
-  {IR_BTN_B_1,  60,  60, 255, "svetle modra"},
+  {IR_BTN_R_1, 255,  60,   0, "orange-red"},
+  {IR_BTN_G_1,   0, 255, 100, "light green"},
+  {IR_BTN_B_1,  60,  60, 255, "light blue"},
   // 4. řada
-  {IR_BTN_R_2, 255, 110,   0, "oranzova"},
-  {IR_BTN_G_2,   0, 255, 180, "tyrkysova"},
-  {IR_BTN_B_2, 140,   0, 255, "fialova"},
+  {IR_BTN_R_2, 255, 110,   0, "orange"},
+  {IR_BTN_G_2,   0, 255, 180, "turquoise"},
+  {IR_BTN_B_2, 140,   0, 255, "violet"},
   // 5. řada
-  {IR_BTN_R_3, 255, 170,   0, "tmave zluta"},
-  {IR_BTN_G_3,   0, 220, 255, "azurova"},
-  {IR_BTN_B_3, 200,   0, 255, "purpurova"},
+  {IR_BTN_R_3, 255, 170,   0, "dark yellow"},
+  {IR_BTN_G_3,   0, 220, 255, "azure"},
+  {IR_BTN_B_3, 200,   0, 255, "purple"},
   // 6. řada
-  {IR_BTN_R_4, 255, 230,   0, "zluta"},
-  {IR_BTN_G_4,   0, 140, 255, "svetle modra 2"},
-  {IR_BTN_B_4, 255,   0, 150, "ruzova"},
+  {IR_BTN_R_4, 255, 230,   0, "yellow"},
+  {IR_BTN_G_4,   0, 140, 255, "sky blue"},
+  {IR_BTN_B_4, 255,   0, 150, "pink"},
 };

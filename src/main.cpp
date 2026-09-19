@@ -42,16 +42,16 @@ void applyOutput() {
 void handleCode(uint64_t code) {
   if (code == IR_BTN_ON) {
     ledOn = true;
-    Serial.println("Zapnuto");
+    Serial.println("Turned on");
   } else if (code == IR_BTN_OFF) {
     ledOn = false;
-    Serial.println("Vypnuto");
+    Serial.println("Turned off");
   } else if (code == IR_BTN_VOLUME_UP) {
     brightness = min<int>(brightness + BRIGHTNESS_STEP, BRIGHTNESS_MAX);
-    Serial.printf("Jas: %u %%\n", brightness);
+    Serial.printf("Brightness: %u %%\n", brightness);
   } else if (code == IR_BTN_VOLUME_DOWN) {
     brightness = max<int>(brightness - BRIGHTNESS_STEP, BRIGHTNESS_MIN);
-    Serial.printf("Jas: %u %%\n", brightness);
+    Serial.printf("Brightness: %u %%\n", brightness);
   } else {
     for (const ColorButton& button : COLOR_BUTTONS) {
       if (button.code == code) {
@@ -59,12 +59,12 @@ void handleCode(uint64_t code) {
         colorG = button.g;
         colorB = button.b;
         ledOn = true;
-        Serial.printf("Barva: %s\n", button.name);
+        Serial.printf("Color: %s\n", button.name);
         applyOutput();
         return;
       }
     }
-    Serial.println("Neznamy kod");
+    Serial.println("Unknown code");
     return;
   }
   applyOutput();
@@ -73,10 +73,10 @@ void handleCode(uint64_t code) {
 void setup() {
   Serial.begin(115200);
   Serial.println();
-  Serial.print("Verze firmwaru: ");
+  Serial.print("Firmware version: ");
   Serial.println(FW_VERSION);
   OtaUpdater::run(WIFI_CREDENTIALS);
-  Serial.print("Verze firmwaru po kontrole aktualizace: ");
+  Serial.print("Firmware version after update check: ");
   Serial.println(FW_VERSION);
 
   Wire.begin(SDA_PIN, SCL_PIN);
@@ -85,13 +85,13 @@ void setup() {
   applyOutput();
 
   irrecv.enableIRIn();
-  Serial.println("Inicializace dokoncena.");
+  Serial.println("Initialization complete.");
 }
 
 void loop() {
   if (irrecv.decode(&results)) {
     if (results.decode_type != decode_type_t::UNKNOWN && !results.repeat) {
-      Serial.print("Prijaty IR signal: ");
+      Serial.print("Received IR signal: ");
       Serial.println(resultToHexidecimal(&results));
       handleCode(results.value);
     }
