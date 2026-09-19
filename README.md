@@ -1,64 +1,64 @@
 # infinity-cube-lamp
 
-Firmware pro lampu s RGB LED páskem na ESP8266 (NodeMCU v2). Pásek se ovládá infračerveným dálkovým ovladačem a firmware se sám aktualizuje z GitHub Releases.
+Firmware for a lamp with an RGB LED strip, running on an ESP8266 (NodeMCU v2). The strip is controlled with an infrared remote, and the firmware updates itself from GitHub Releases.
 
 ## Hardware
 
 - ESP8266 NodeMCU v2
-- PWM driver (I2C, adresa `0x40`), kanály 0, 1, 2 = červená, zelená, modrá
-- IR přijímač
-- Klasický 24tlačítkový IR ovladač s barvami
+- PWM driver (I2C, address `0x40`), channels 0, 1, 2 = red, green, blue
+- IR receiver
+- Classic 24-button IR remote with colored buttons
 
-Zapojení (jde změnit v [include/config.h](include/config.h)):
+Wiring (can be changed in [include/config.h](include/config.h)):
 
-| Signál | GPIO |
+| Signal | GPIO |
 |---|---|
 | I2C SDA | 4 |
 | I2C SCL | 5 |
-| IR přijímač | 14 (D5) |
+| IR receiver | 14 (D5) |
 
-## Ovládání
+## Controls
 
-| Tlačítko | Akce |
+| Button | Action |
 |---|---|
-| ON / OFF | zapnutí / vypnutí pásku (ON obnoví poslední barvu) |
-| VOLUME UP / DOWN | jas po 10 % (10 až 100 %) |
-| R, G, B, W | červená, zelená, modrá, bílá |
-| ostatní barevná tlačítka | odstíny podle řady (viz `COLOR_BUTTONS`) |
+| ON / OFF | turn the strip on / off (ON restores the last color) |
+| VOLUME UP / DOWN | brightness in 10 % steps (10 to 100 %) |
+| R, G, B, W | red, green, blue, white |
+| other color buttons | shades by row (see `COLOR_BUTTONS`) |
 
-Tlačítka FLASH, STROBE, FADE a SMOOTH zatím nic nedělají.
+The FLASH, STROBE, FADE and SMOOTH buttons do nothing yet.
 
-## Nastavení
+## Configuration
 
-Vše je v [include/config.h](include/config.h): piny, adresa a frekvence PWM driveru, kroky jasu, výchozí barva a tabulka barev tlačítek. Kódy tlačítek jsou v [include/IRController.h](include/IRController.h).
+Everything is in [include/config.h](include/config.h): pins, PWM driver address and frequency, brightness steps, default color and the color table for the buttons. Button codes are in [include/IRController.h](include/IRController.h).
 
 ## WiFi
 
-Vytvoř `include/secrets.h` (je v `.gitignore`):
+Create `include/secrets.h` (it is in `.gitignore`):
 
 ```cpp
-#define SECRET_SSID "nazev-wifi"
-#define SECRET_PASS "heslo-wifi"
+#define SECRET_SSID "wifi-name"
+#define SECRET_PASS "wifi-password"
 ```
 
-Při prvním nahrání přes USB se údaje uloží do EEPROM. Firmware z GitHub Actions `secrets.h` nemá a používá uložené údaje. Pro změnu WiFi uprav `secrets.h` a nahraj firmware znovu přes USB.
+On the first upload over USB the credentials are saved to EEPROM. Firmware built by GitHub Actions has no `secrets.h` and uses the saved credentials. To change WiFi, edit `secrets.h` and upload the firmware over USB again.
 
-## Build a nahrání
+## Build and upload
 
 ```
 pio run -t upload
 pio device monitor
 ```
 
-Při startu se vypíše verze firmwaru a výsledek kontroly aktualizace.
+On startup the firmware prints its version and the result of the update check.
 
-## Aktualizace firmwaru (OTA)
+## Firmware update (OTA)
 
-Používá knihovnu [esp-ota-updater](https://github.com/davidvancl/esp-ota-updater). Při startu zařízení zkontroluje nejnovější release a případně se aktualizuje.
+Uses the [esp-ota-updater](https://github.com/davidvancl/esp-ota-updater) library. On startup the device checks the latest release and updates itself if a newer version exists.
 
-Nová verze:
-1. V `platformio.ini` zvyš `custom_version`.
-2. Commitni a pushni do `main`.
-3. GitHub Actions vydají release. Zařízení se po restartu aktualizuje.
+Releasing a new version:
+1. Increase `custom_version` in `platformio.ini`.
+2. Commit and push to `main`.
+3. GitHub Actions publish a release. The device updates after its next restart.
 
-Lokálně nastavená verze v `platformio.ini` se nesmí pushnout, dokud nechceš vydat release.
+Do not push a locally changed version in `platformio.ini` unless you want to publish a release.
