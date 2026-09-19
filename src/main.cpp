@@ -1,6 +1,14 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_PWMServoDriver.h>
+#include <OtaUpdater.h>
+
+#if __has_include("secrets.h")
+#include "secrets.h"
+#define WIFI_CREDENTIALS SECRET_SSID, SECRET_PASS
+#else
+#define WIFI_CREDENTIALS nullptr, nullptr
+#endif
 
 #define SDA_PIN 4
 #define SCL_PIN 5
@@ -11,6 +19,7 @@ Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(0x40);
 
 void setup() {
   Serial.begin(115200);
+  OtaUpdater::run(WIFI_CREDENTIALS);
   Wire.begin(SDA_PIN, SCL_PIN);
   pwm.begin();
   pwm.setPWMFreq(100);
