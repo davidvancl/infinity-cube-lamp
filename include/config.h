@@ -3,26 +3,17 @@
 #include <Arduino.h>
 #include "IRController.h"
 
-// I2C (PWM driver)
-#define SDA_PIN 4
-#define SCL_PIN 5
-#define PWM_DRIVER_ADDRESS 0x40
 #define PWM_FREQUENCY 1000
-
-// GPIO4 is used by I2C (SDA), so the IR receiver is on GPIO14 (D5)
 #define IR_RECEIVE_PIN 14
 
-// PWM driver channels for the LED strip
-#define RED_PIN   0
-#define GREEN_PIN 1
-#define BLUE_PIN  2
+#define RED_PIN   4
+#define GREEN_PIN 12
+#define BLUE_PIN  5
 
-// Brightness in percent
 #define BRIGHTNESS_STEP 10
 #define BRIGHTNESS_MIN  10
 #define BRIGHTNESS_MAX  100
 
-// Default color after startup
 #define DEFAULT_R 255
 #define DEFAULT_G 255
 #define DEFAULT_B 255

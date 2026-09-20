@@ -1,6 +1,4 @@
 #include <Arduino.h>
-#include <Wire.h>
-#include <Adafruit_PWMServoDriver.h>
 #include <IRremoteESP8266.h>
 #include <IRrecv.h>
 #include <IRutils.h>
@@ -15,7 +13,8 @@
 #define WIFI_CREDENTIALS nullptr, nullptr
 #endif
 
-Adafruit_PWMServoDriver pwm = Adafruit_PWMServoDriver(PWM_DRIVER_ADDRESS);
+static const uint16_t PWM_MAX = 4095;
+
 IRrecv irrecv(IR_RECEIVE_PIN);
 decode_results results;
 
@@ -23,20 +22,22 @@ uint8_t colorR = DEFAULT_R, colorG = DEFAULT_G, colorB = DEFAULT_B;
 uint8_t brightness = BRIGHTNESS_MAX;
 bool ledOn = true;
 
+// Gama korekce jen na jas, poměr barevných kanálů zůstává beze změny
 uint16_t toPwm(uint8_t value) {
-  return (uint32_t)value * 4095 / 255 * brightness / 100;
+  float b = powf(brightness / 100.0f, 2.2f);
+  return (uint16_t)(value / 255.0f * b * PWM_MAX);
 }
 
 void applyOutput() {
   if (!ledOn) {
-    pwm.setPWM(RED_PIN, 0, 0);
-    pwm.setPWM(GREEN_PIN, 0, 0);
-    pwm.setPWM(BLUE_PIN, 0, 0);
+    analogWrite(RED_PIN, 0);
+    analogWrite(GREEN_PIN, 0);
+    analogWrite(BLUE_PIN, 0);
     return;
   }
-  pwm.setPWM(RED_PIN, 0, toPwm(colorR));
-  pwm.setPWM(GREEN_PIN, 0, toPwm(colorG));
-  pwm.setPWM(BLUE_PIN, 0, toPwm(colorB));
+  analogWrite(RED_PIN, toPwm(colorR));
+  analogWrite(GREEN_PIN, toPwm(colorG));
+  analogWrite(BLUE_PIN, toPwm(colorB));
 }
 
 void handleCode(uint64_t code) {
@@ -73,15 +74,23 @@ void handleCode(uint64_t code) {
 void setup() {
   Serial.begin(115200);
   Serial.println();
+
+  // Výstupy nastavit hned na začátku, aby pásek během OTA nesvítil náhodně
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
+  analogWriteRange(PWM_MAX);
+  analogWriteFreq(PWM_FREQUENCY);
+  analogWrite(RED_PIN, 0);
+  analogWrite(GREEN_PIN, 0);
+  analogWrite(BLUE_PIN, 0);
+
   Serial.print("Firmware version: ");
   Serial.println(FW_VERSION);
   OtaUpdater::run(WIFI_CREDENTIALS);
   Serial.print("Firmware version after update check: ");
   Serial.println(FW_VERSION);
 
-  Wire.begin(SDA_PIN, SCL_PIN);
-  pwm.begin();
-  pwm.setPWMFreq(PWM_FREQUENCY);
   applyOutput();
 
   irrecv.enableIRIn();
