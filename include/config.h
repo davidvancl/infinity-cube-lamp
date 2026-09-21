@@ -18,6 +18,10 @@
 #define DEFAULT_G 255
 #define DEFAULT_B 255
 
+#define BOOT_R 255
+#define BOOT_G 90
+#define BOOT_B 0
+
 struct ColorButton {
   uint64_t code;
   uint8_t r, g, b;
