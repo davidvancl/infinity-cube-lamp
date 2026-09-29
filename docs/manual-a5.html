@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<title>Infinity Cube – návod</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { width: 874px; height: 1240px; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #1d1d24;
+    background: #ffffff;
+    padding: 44px 48px 36px;
+    display: flex;
+    flex-direction: column;
+    gap: 26px;
+  }
+
+  header { display: flex; align-items: center; gap: 20px; border-bottom: 3px solid #1d1d24; padding-bottom: 18px; }
+  .cube {
+    width: 62px; height: 62px; border-radius: 10px; flex: none;
+    background: conic-gradient(from 45deg, #ff3b3b, #ffb300, #2fd66b, #2f9bff, #b44bff, #ff3b3b);
+    display: grid; place-items: center;
+  }
+  .cube::after { content: ""; width: 34px; height: 34px; border-radius: 6px; background: #fff; box-shadow: inset 0 0 0 3px #1d1d24; }
+  h1 { font-size: 38px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
+  .sub { font-size: 18px; color: #5b5b66; margin-top: 6px; }
+
+  h2 { font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 12px; }
+
+  .top { display: flex; gap: 34px; align-items: flex-start; }
+
+  /* remote */
+  .remote {
+    flex: none; width: 262px; padding: 20px 18px 24px;
+    background: #24242b; border-radius: 26px 26px 34px 34px;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 11px 10px;
+  }
+  .ir { grid-column: 1 / -1; justify-self: center; width: 34px; height: 10px; border-radius: 5px; background: #6b1b1b; margin-bottom: 4px; }
+  .btn {
+    position: relative; height: 40px; border-radius: 20px;
+    display: grid; place-items: center;
+    font-size: 11px; font-weight: 700; color: #fff; letter-spacing: 0.3px;
+    box-shadow: inset 0 -3px 0 rgba(0,0,0,.25);
+  }
+  .btn.dark  { background: #4a4a55; }
+  .btn.muted { background: #3a3a42; color: #7d7d88; }
+  .btn.off   { background: #1a1a1f; box-shadow: inset 0 0 0 2px #555; }
+  .btn.on    { background: #d7263d; }
+  .btn.w     { background: #f4f4f4; color: #333; }
+  .badge {
+    position: absolute; top: -7px; right: -6px;
+    width: 22px; height: 22px; border-radius: 50%;
+    background: #ffd400; color: #1d1d24; font-size: 13px; font-weight: 800;
+    display: grid; place-items: center; box-shadow: 0 0 0 2px #24242b;
+  }
+
+  /* legend */
+  .legend { flex: 1; display: flex; flex-direction: column; gap: 14px; }
+  .item { display: flex; gap: 14px; align-items: flex-start; }
+  .num {
+    flex: none; width: 32px; height: 32px; border-radius: 50%;
+    background: #ffd400; font-weight: 800; font-size: 17px;
+    display: grid; place-items: center;
+  }
+  .item b { display: block; font-size: 18px; line-height: 1.2; }
+  .item p { font-size: 15px; line-height: 1.35; color: #45454f; margin-top: 2px; }
+  .note { font-size: 13.5px; color: #7a7a85; margin-top: 2px; }
+
+  /* modes */
+  .modes { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .mode { border-radius: 14px; padding: 16px 18px; border: 2px solid; }
+  .mode.m1 { border-color: #e6b400; background: #fff9de; }
+  .mode.m2 { border-color: #1fa855; background: #e9f8ef; }
+  .mode .tag { font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+  .m1 .tag { color: #9a7700; }
+  .m2 .tag { color: #137a3b; }
+  .mode h3 { font-size: 21px; margin: 2px 0 6px; }
+  .mode p { font-size: 15px; line-height: 1.4; color: #3a3a44; }
+  .mode .default { display: inline-block; margin-top: 8px; font-size: 13px; font-weight: 700; color: #137a3b; background: #c9efd7; padding: 2px 10px; border-radius: 10px; }
+
+  /* signals */
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 10px 6px; border-bottom: 1px solid #e3e3e8; font-size: 15.5px; vertical-align: middle; }
+  tr:last-child td { border-bottom: none; }
+  td.sig { width: 150px; }
+  td.what { font-weight: 700; width: 200px; }
+  td.mean { color: #45454f; line-height: 1.35; }
+  .dots { display: flex; gap: 7px; align-items: center; }
+  .dot { width: 20px; height: 20px; border-radius: 50%; }
+  .dot.glow { width: 44px; border-radius: 10px; }
+  .dot.gap { background: #e3e3e8 !important; }
+  .yellow { background: #ffc800; }
+  .green  { background: #1fc95f; }
+  .red    { background: #e5232d; }
+  .orange { background: #ff6a00; }
+  .ell { font-size: 20px; color: #999; line-height: 1; }
+
+  footer {
+    margin-top: auto; font-size: 13.5px; color: #6b6b75;
+    border-top: 1px solid #e3e3e8; padding-top: 12px; line-height: 1.45;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="cube"></div>
+  <div>
+    <h1>Infinity Cube lampa</h1>
+    <div class="sub">Návod k ovládání dálkovým ovladačem</div>
+  </div>
+</header>
+
+<section class="top">
+  <div class="remote">
+    <div class="ir"></div>
+
+    <div class="btn dark">JAS +<span class="badge">1</span></div>
+    <div class="btn dark">JAS −</div>
+    <div class="btn off">OFF<span class="badge">2</span></div>
+    <div class="btn on">ON</div>
+
+    <div class="btn" style="background:#ff0000">R<span class="badge">3</span></div>
+    <div class="btn" style="background:#00c800">G</div>
+    <div class="btn" style="background:#0000ff">B</div>
+    <div class="btn w">W</div>
+
+    <div class="btn" style="background:#ff3c00"></div>
+    <div class="btn" style="background:#00e070"></div>
+    <div class="btn" style="background:#3c3cff"></div>
+    <div class="btn dark">FLASH<span class="badge">4</span></div>
+
+    <div class="btn" style="background:#ff6e00"></div>
+    <div class="btn" style="background:#00d8a0"></div>
+    <div class="btn" style="background:#8c00ff"></div>
+    <div class="btn muted">STROBE</div>
+
+    <div class="btn" style="background:#ffaa00"></div>
+    <div class="btn" style="background:#00c4ff"></div>
+    <div class="btn" style="background:#c800ff"></div>
+    <div class="btn muted">FADE</div>
+
+    <div class="btn" style="background:#ffe000"></div>
+    <div class="btn" style="background:#008cff"></div>
+    <div class="btn" style="background:#ff0096"></div>
+    <div class="btn dark">SMOOTH<span class="badge">5</span></div>
+  </div>
+
+  <div class="legend">
+    <div class="item"><div class="num">1</div><div>
+      <b>Jas + / Jas −</b>
+      <p>Zesílí nebo ztlumí světlo (10 až 100 %).</p>
+    </div></div>
+    <div class="item"><div class="num">2</div><div>
+      <b>OFF / ON</b>
+      <p>Vypne nebo zapne lampu. Po zapnutí se vrátí poslední barva.</p>
+    </div></div>
+    <div class="item"><div class="num">3</div><div>
+      <b>Barevná tlačítka</b>
+      <p>Nastaví barvu světla.</p>
+      <div class="note">Fungují jen v režimu 1.</div>
+    </div></div>
+    <div class="item"><div class="num">4</div><div>
+      <b>FLASH – který režim běží?</b>
+      <p>Lampa 3× blikne: <b style="display:inline;font-size:15px;color:#9a7700">žlutě</b> = režim 1, <b style="display:inline;font-size:15px;color:#137a3b">zeleně</b> = režim 2.</p>
+    </div></div>
+    <div class="item"><div class="num">5</div><div>
+      <b>SMOOTH – přepnout režim</b>
+      <p>Přepíná mezi režimem 1 a režimem 2.</p>
+    </div></div>
+    <div class="note">Tlačítka STROBE a FADE nemají žádnou funkci.</div>
+  </div>
+</section>
+
+<section>
+  <h2>Dva režimy</h2>
+  <div class="modes">
+    <div class="mode m1">
+      <div class="tag">Režim 1</div>
+      <h3>Ruční ovládání</h3>
+      <p>Barvu si vybíráte sami tlačítky na ovladači.</p>
+    </div>
+    <div class="mode m2">
+      <div class="tag">Režim 2</div>
+      <h3>Indikátor chyb</h3>
+      <p>Barvu nastavuje lampa sama podle stavu indikátoru nových chyb. Mění se automaticky.</p>
+      <span class="default">Zapne se sám po startu</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Co znamená světlo</h2>
+  <table>
+    <tr>
+      <td class="sig"><div class="dots"><div class="dot glow orange"></div></div></td>
+      <td class="what">Svítí oranžově</td>
+      <td class="mean">Lampa se spouští a připojuje k internetu. Chvíli počkejte.</td>
+    </tr>
+    <tr>
+      <td class="sig"><div class="dots"><div class="dot yellow"></div><div class="dot yellow"></div><div class="dot yellow"></div></div></td>
+      <td class="what">3× žlutě</td>
+      <td class="mean">Běží režim 1. Po stisku SMOOTH to znamená, že režim 2 nejde zapnout, protože není internet.</td>
+    </tr>
+    <tr>
+      <td class="sig"><div class="dots"><div class="dot green"></div><div class="dot green"></div><div class="dot green"></div></div></td>
+      <td class="what">3× zeleně</td>
+      <td class="mean">Běží režim 2.</td>
+    </tr>
+    <tr>
+      <td class="sig"><div class="dots"><div class="dot red"></div><div class="dot gap"></div><div class="dot red"></div><span class="ell">…</span></div></td>
+      <td class="what">Stále bliká červeně</td>
+      <td class="mean">Lampa nemůže načíst stav indikátoru (výpadek internetu). Až se spojení obnoví, přestane blikat sama.</td>
+    </tr>
+  </table>
+</section>
+
+<footer>
+  Bez internetu funguje jen režim 1. Chcete-li měnit barvu ovladačem, když běží režim 2, stiskněte nejprve SMOOTH.
+</footer>
+
+</body>
+</html>

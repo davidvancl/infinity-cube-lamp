@@ -2,6 +2,10 @@
 
 Firmware for a lamp with an RGB LED strip, running on an ESP8266 (NodeMCU v2). The strip is controlled with an infrared remote, and the firmware updates itself from GitHub Releases.
 
+<img src="docs/20260929_205610.jpg" alt="Infinity Cube lamp" width="400">
+
+*The finished lamp (LEDs off).*
+
 ## Hardware
 
 - ESP8266 NodeMCU v2
@@ -19,6 +23,10 @@ Wiring (can be changed in [include/config.h](include/config.h)):
 | IR receiver | 14 (D5) |
 
 ## Controls
+
+A printable A5 user manual in Czech is in [docs/manual-a5.png](docs/manual-a5.png). Its source is [docs/manual-a5.html](docs/manual-a5.html).
+
+<a href="docs/manual-a5.png"><img src="docs/manual-a5.png" alt="User manual" width="360"></a>
 
 | Button | Action |
 |---|---|
