@@ -24,14 +24,23 @@ Wiring (can be changed in [include/config.h](include/config.h)):
 |---|---|
 | ON / OFF | turn the strip on / off (ON restores the last color) |
 | VOLUME UP / DOWN | brightness in 10 % steps (10 to 100 %) |
-| R, G, B, W | red, green, blue, white |
-| other color buttons | shades by row (see `COLOR_BUTTONS`) |
+| R, G, B, W | red, green, blue, white (mode 1 only) |
+| other color buttons | shades by row, see `COLOR_BUTTONS` (mode 1 only) |
+| SMOOTH | switch between mode 1 and mode 2 |
+| FLASH | show the active mode: 3 yellow blinks = mode 1, 3 green blinks = mode 2 |
 
-The FLASH, STROBE, FADE and SMOOTH buttons do nothing yet.
+The STROBE and FADE buttons do nothing yet.
+
+## Modes
+
+- **Mode 1 (manual)** – the color is set with the remote.
+- **Mode 2 (indicator)** – the lamp downloads `INDICATOR_URL` every 5 s and shows the color from the `rgb` field of the response, e.g. `{"color": "green", "rgb": [0, 255, 0]}`. ON/OFF and brightness still work.
+
+After startup the lamp is in mode 2 if the URL answers, otherwise in mode 1. Without internet only mode 1 is available: pressing SMOOTH blinks yellow 3 times and the lamp stays in mode 1. If the download fails while in mode 2, the lamp blinks red until the next successful download. The manual color is kept while mode 2 is active.
 
 ## Configuration
 
-Everything is in [include/config.h](include/config.h): pins, PWM frequency, brightness steps, default and boot color and the color table for the buttons. Button codes are in [include/IRController.h](include/IRController.h).
+Everything is in [include/config.h](include/config.h): pins, PWM frequency, brightness steps, default and boot color, the color table for the buttons, the indicator URL, poll interval and mode blink colors. Button codes are in [include/IRController.h](include/IRController.h).
 
 ## WiFi
 
@@ -58,6 +67,8 @@ On startup the strip glows orange while the device connects to WiFi and checks f
 - `src/main.cpp` – `setup()` and `loop()` only
 - `src/Led.cpp` – PWM output, brightness, color, boot color
 - `src/IrRemote.cpp` – IR receiver and button handling
+- `src/Mode.cpp` – switching between mode 1 and mode 2, FLASH blinks
+- `src/Indicator.cpp` – downloads the indicator URL and parses the color
 
 ## Firmware update (OTA)
 

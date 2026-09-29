@@ -2,6 +2,7 @@
 #include <OtaUpdater.h>
 #include "IrRemote.h"
 #include "Led.h"
+#include "Mode.h"
 #include "WifiCredentials.h"
 
 void setup() {
@@ -18,10 +19,13 @@ void setup() {
   Serial.println(FW_VERSION);
 
   Led::apply();
+  Mode::begin();
   IrRemote::begin();
   Serial.println("Initialization complete.");
 }
 
 void loop() {
   IrRemote::poll();
+  Mode::poll();
+  Led::tick();
 }

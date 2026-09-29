@@ -5,6 +5,7 @@
 #include "IrRemote.h"
 #include "IRController.h"
 #include "Led.h"
+#include "Mode.h"
 #include "config.h"
 
 namespace IrRemote {
@@ -23,7 +24,15 @@ static void handleCode(uint64_t code) {
     Led::brighter();
   } else if (code == IR_BTN_VOLUME_DOWN) {
     Led::dimmer();
+  } else if (code == IR_BTN_SMOOTH) {
+    Mode::toggle();
+  } else if (code == IR_BTN_FLASH) {
+    Mode::showActive();
   } else {
+    if (Mode::current() != Mode::MANUAL) {
+      Serial.println("Color buttons work only in manual mode");
+      return;
+    }
     for (const ColorButton& button : COLOR_BUTTONS) {
       if (button.code == code) {
         Serial.printf("Color: %s\n", button.name);

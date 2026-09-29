@@ -22,6 +22,26 @@
 #define BOOT_G 90
 #define BOOT_B 0
 
+#define INDICATOR_URL "https://klient.wpj.cz/indikator/nove-chyby/"
+#define INDICATOR_POLL_INTERVAL_MS 5000
+#define INDICATOR_HTTP_TIMEOUT_MS  5000
+
+#define ERROR_BLINK_MS 500
+#define ERROR_BLINK_R 255
+#define ERROR_BLINK_G 0
+#define ERROR_BLINK_B 0
+
+#define MODE_BLINK_COUNT 3
+#define MODE_BLINK_MS    250
+
+#define MODE_MANUAL_BLINK_R 255
+#define MODE_MANUAL_BLINK_G 200
+#define MODE_MANUAL_BLINK_B 0
+
+#define MODE_INDICATOR_BLINK_R 0
+#define MODE_INDICATOR_BLINK_G 255
+#define MODE_INDICATOR_BLINK_B 0
+
 struct ColorButton {
   uint64_t code;
   uint8_t r, g, b;
