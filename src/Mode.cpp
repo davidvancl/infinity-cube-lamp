@@ -18,10 +18,15 @@ static void enterManual() {
 static bool enterIndicator() {
   uint8_t r, g, b;
   lastPoll = millis();
-  if (!Indicator::fetchColor(r, g, b)) return false;
+  Indicator::Result result = Indicator::fetchColor(r, g, b);
+  if (result == Indicator::FAILED) return false;
 
   mode = INDICATOR;
-  Led::setOverrideColor(r, g, b);
+  if (result == Indicator::OK) {
+    Led::setOverrideColor(r, g, b);
+  } else {
+    Led::showServerError();
+  }
   Serial.println("Mode 2: indicator");
   return true;
 }
@@ -35,10 +40,16 @@ void poll() {
   lastPoll = millis();
 
   uint8_t r, g, b;
-  if (Indicator::fetchColor(r, g, b)) {
-    Led::setOverrideColor(r, g, b);
-  } else {
-    Led::showError();
+  switch (Indicator::fetchColor(r, g, b)) {
+    case Indicator::OK:
+      Led::setOverrideColor(r, g, b);
+      break;
+    case Indicator::SERVER_ERROR:
+      Led::showServerError();
+      break;
+    case Indicator::FAILED:
+      Led::showError();
+      break;
   }
 }
 

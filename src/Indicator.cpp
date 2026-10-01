@@ -28,10 +28,10 @@ static bool parseColor(const String& body, uint8_t& r, uint8_t& g, uint8_t& b) {
   return true;
 }
 
-bool fetchColor(uint8_t& r, uint8_t& g, uint8_t& b) {
+Result fetchColor(uint8_t& r, uint8_t& g, uint8_t& b) {
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("[Indicator] no wifi");
-    return false;
+    return FAILED;
   }
 
   BearSSL::WiFiClientSecure client;
@@ -42,18 +42,19 @@ bool fetchColor(uint8_t& r, uint8_t& g, uint8_t& b) {
   http.setTimeout(INDICATOR_HTTP_TIMEOUT_MS);
   if (!http.begin(client, INDICATOR_URL)) {
     Serial.println("[Indicator] cannot open URL");
-    return false;
+    return FAILED;
   }
 
   int code = http.GET();
-  bool ok = false;
+  Result result = FAILED;
   if (code == HTTP_CODE_OK) {
-    ok = parseColor(http.getString(), r, g, b);
+    if (parseColor(http.getString(), r, g, b)) result = OK;
   } else {
     Serial.printf("[Indicator] HTTP error %d\n", code);
+    if (code >= 500) result = SERVER_ERROR;
   }
   http.end();
-  return ok;
+  return result;
 }
 
 }

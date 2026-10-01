@@ -15,6 +15,8 @@ static uint8_t overrideR = 0, overrideG = 0, overrideB = 0;
 static bool errorBlink = false;
 static bool errorPhaseOn = false;
 static uint32_t errorPhaseStart = 0;
+static uint8_t errorR = ERROR_BLINK_R, errorG = ERROR_BLINK_G, errorB = ERROR_BLINK_B;
+static uint8_t errorLevel = BRIGHTNESS_MAX;
 
 static uint16_t toPwm(uint8_t value, uint8_t level) {
   float b = powf(level / 100.0f, 2.2f);
@@ -43,7 +45,7 @@ void apply() {
   }
   if (errorBlink) {
     if (errorPhaseOn) {
-      write(ERROR_BLINK_R, ERROR_BLINK_G, ERROR_BLINK_B, brightness);
+      write(errorR, errorG, errorB, errorLevel);
     } else {
       write(0, 0, 0, 0);
     }
@@ -103,12 +105,26 @@ void clearOverride() {
   apply();
 }
 
-void showError() {
-  if (errorBlink) return;
+static void startErrorBlink(uint8_t r, uint8_t g, uint8_t b, uint8_t level) {
+  bool same = errorBlink && errorR == r && errorG == g && errorB == b && errorLevel == level;
+  if (same) return;
+  errorR = r;
+  errorG = g;
+  errorB = b;
+  errorLevel = level;
   errorBlink = true;
   errorPhaseOn = true;
   errorPhaseStart = millis();
   apply();
+}
+
+void showError() {
+  startErrorBlink(ERROR_BLINK_R, ERROR_BLINK_G, ERROR_BLINK_B, brightness);
+}
+
+void showServerError() {
+  startErrorBlink(SERVER_ERROR_BLINK_R, SERVER_ERROR_BLINK_G, SERVER_ERROR_BLINK_B,
+                  min<uint8_t>(brightness, SERVER_ERROR_BRIGHTNESS));
 }
 
 void tick() {
